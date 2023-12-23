@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Orders | Unique Fabrications</title>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <!-- Navbar brand/logo (you can replace it with your logo) -->
+      <a class="navbar-brand" href="#">Unique Fabrications</a>
+
+      <!-- Navbar items aligned to the left -->
+      <div class="collapse navbar-collapse mx-auto" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="services">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="orders">Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="feedback">Feedback</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Logout button at the right corner -->
+      <div class="d-flex">
+        <button class="btn btn-outline-light" type="button" onclick="lgout()"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </div>
+  </nav>
+
+	<div class="container-fluid mt-5">
+		<div class="card">
+			<div class="card-header">
+				<h3 class="card-title">Orders</h3>
+			</div>
+			<div class="card-body">
+				<table class="table table-bordered text-center">
+					<thead>
+						<th>Sr No</th>
+						<th>User</th>
+						<th>Service</th>
+						<th>Area (in sqft)</th>
+						<th>Total (in ₹)</th>
+						<th>Date</th>
+						<th>Status</th>
+						<th>Actions</th>
+					</thead>
+					<tbody>
+						{% for order in orders %}
+							<tr>
+								<td>{{ forloop.counter }}</td>
+								<td>{{ order.user.name }}</td>
+								<td>{{ order.service }}</td>
+								<td>{{ order.area }}</td>
+								<td>{{ order.total }}</td>
+								<td>{{ order.date }}</td>
+								<td>
+									{% if order.payment_status == False %}
+										Pending
+									{% else %}
+										Complete
+									{% endif %}
+								</td>
+								<td>
+									<!-- <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editOrder"  data-bs-id="{{ order.id }}"><i class="bx bx-pencil"></i></button> -->
+									<button class="btn btn-info" id="rzp-button_{{ forloop.counter }}" onclick="pay('rzp-button_{{ forloop.counter }}',{{ order.id }})" data-bs-amount={{ order.total }}><i class="bx bx-dollar-circle"></i></button>
+									<button class="btn btn-danger" onclick="del_order({{ order.id }})"><i class="bx bx-trash"></i></button>
+									<button class="btn btn-success" onclick="quot({{ order.id }})"><i class="bx bx-receipt"></i></button>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="editOrder" tabindex="-1" aria-labelledby="editOrderLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h1 class="modal-title fs-5" id="editOrderLabel">Edit Order</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	      	<form method="post" action="{% url 'update_order' %}" enctype="multipart/form-data">
+	      		{% csrf_token %}
+	      		<input type="hidden" name="oid" id="oid" readonly>
+	      		<div class="form-floating mb-3">
+				  <input type="text" class="form-control" name="user" id="user" placeholder="name@example.com">
+				  <label for="user">User</label>
+				</div>
+				<div class="form-floating mb-3">
+				  <input class="form-control" type="text" name="service" id="service" placeholder="Service" readonly>
+				  <label for="service" class="form-label">Service</label>
+				  </select>
+				</div>
+				<div class="form-floating mb-3">
+				  <input type="text" class="form-control" id="area" placeholder="Description" name="area">
+				  <label for="area">Area</label>
+				</div>
+				<div class="form-floating mb-2">
+				  <input type="text" class="form-control" id="total" placeholder="Rate" name="total">
+				  <label for="total">Total</label>
+				</div>
+			</div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary">Save changes</button>
+		      </div>
+	      	</form>
+	    </div>
+	  </div>
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+	function lgout() {
+		window.location.href = "logout";
+	}
+
+	function del_order(id) {
+		if (confirm("do you really want to delete this order?")) {
+			window.location.href="/delete_order/" + id
+			alert("Service deleted")
+		}
+	}
+
+	function quot(id) {
+		window.location.href="quotation/" + id;
+	}
+</script>
+<script type="text/javascript">
+	async function edit_order(id) {
+		const response = await fetch('/edit_order/' + id);
+		const order = await response.json();
+		// console.log(order)
+		const modalTitle = editModal.querySelector('.modal-title')
+		const oid = editModal.querySelector('#oid')
+		const name = editModal.querySelector('#user')
+		const service = editModal.querySelector('#service')
+		const area = editModal.querySelector('#area')
+		const rate = editModal.querySelector('#total')
+		// modalTitle.textContent = `Edit ${service.name}`;
+		oid.value = id;
+		name.value = order.user;
+		service.value = order.service;
+		area.value = order.area;
+		rate.value = order.total;
+	}
+</script>
+<script type="text/javascript">
+	const editModal = document.getElementById('editOrder');
+	editModal.addEventListener('show.bs.modal', event => {
+		const button = event.relatedTarget;
+		const id = button.getAttribute('data-bs-id');
+		edit_order(id);
+	})
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script type="text/javascript">
+	async function pay(bid,id) {
+		// const btn = document.getElementById(bid)
+		// const amount = btn.getAttribute('data-bs-amount')
+		const response = await fetch('/payment/' + id);
+		const payment = await response.json();
+		var options = {
+		    "key": "rzp_test_jVJhjYB6fVmmy7", // Enter the Key ID generated from the Dashboard
+		    "amount": payment.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+		    "currency": "INR",
+		    "name": "Unique Fabrications",
+		    "description": "Complete transaction",
+		    "image": "static/img/logo.png",
+		    "order_id": payment.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+		    "callback_url": "https://localhost:8000/orders",
+		    "handler": function (response){
+		        // alert(response.razorpay_payment_id);
+		        // alert(response.razorpay_order_id);
+		        // alert(response.razorpay_signature)
+		        alert("Payment Successful.")
+		        window.location.href="orders"
+		    },
+		    "prefill": {
+		        "name": "Gaurav Kumar",
+		        "email": "gaurav.kumar@example.com",
+		        "contact": "9000090000"
+		    },
+		    "notes": {
+		        "address": "Razorpay Corporate Office"
+		    },
+		    "theme": {
+		        "color": "#3399cc"
+		    }
+		};
+		var rzp1 = new Razorpay(options);
+		rzp1.on('payment.failed', function (response){
+		        alert(response.error.code);
+		        alert(response.error.description);
+		        alert(response.error.source);
+		        alert(response.error.step);
+		        alert(response.error.reason);
+		        alert(response.error.metadata.order_id);
+		        alert(response.error.metadata.payment_id);
+		});
+		document.getElementById(bid).onclick = function(e){
+		    rzp1.open();
+		    e.preventDefault();
+		}
+	}
+</script>
+</html>

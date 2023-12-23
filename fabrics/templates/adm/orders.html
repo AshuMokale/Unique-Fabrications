@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Orders | unique fabrications</title>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+	<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <!-- Navbar brand/logo (you can replace it with your logo) -->
+      <a class="navbar-brand" href="#">Unique Fabrications</a>
+
+      <!-- Navbar items aligned to the left -->
+      <div class="collapse navbar-collapse mx-auto" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="services">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="orders">Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="feedback">Feedback</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Logout button at the right corner -->
+      <div class="d-flex">
+        <button class="btn btn-outline-light" type="button" onclick="lgout()"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </div>
+  </nav>
+	<div class="container-fluid mt-5">
+		<div class="card">
+			<div class="card-header">
+				<h3 class="card-title">Orders</h3>
+			</div>
+			<div class="card-body">
+				<table class="table table-bordered text-center">
+					<thead>
+						<th>Sr No</th>
+						<th>User</th>
+						<th>Service</th>
+						<th>Area (in sqft)</th>
+						<th>Total (in ₹)</th>
+						<th>Date</th>
+						<th>Status</th>
+						<th>Actions</th>
+					</thead>
+					<tbody>
+						{% for order in orders %}
+							<tr>
+								<td>{{ forloop.counter }}</td>
+								<td>{{ order.user.name }}</td>
+								<td>{{ order.service }}</td>
+								<td>{{ order.area }}</td>
+								<td>{{ order.total }}</td>
+								<td>{{ order.date }}</td>
+								<td>
+									{% if order.payment_status == False %}
+										Pending
+									{% else %}
+										Complete
+									{% endif %}
+								</td>
+								<td>
+									<button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editOrder"  data-bs-id="{{ order.id }}"><i class="bx bx-pencil"></i></button>
+									<button class="btn btn-danger" onclick="del_order({{ order.id }})"><i class="bx bx-trash"></i></button>
+									<button class="btn btn-success" onclick="quot({{ order.id }})"><i class="bx bx-receipt"></i></button>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="editOrder" tabindex="-1" aria-labelledby="editOrderLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h1 class="modal-title fs-5" id="editOrderLabel">Edit Order</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	      	<form method="post" action="{% url 'update_order' %}" enctype="multipart/form-data">
+	      		{% csrf_token %}
+	      		<input type="hidden" name="oid" id="oid" readonly>
+	      		<div class="mb-3">
+				  <label for="user" class="form-label">User</label>
+				  <!-- <input class="form-control" type="text" name="service" id="service" placeholder="Service"> -->
+				  <select name="user" id="user" class="form-select" aria-label="Default select example">
+				  	{% for user in users %}
+				  		<option>{{ user }}</option>
+				  	{% endfor %}
+				  </select>
+				</div>
+				<div class="form-floating mb-3">
+				  <input class="form-control" type="text" name="service" id="service" placeholder="Service" readonly>
+				  <label for="service" class="form-label">Service</label>
+				</div>
+				<div class="form-floating mb-3">
+				  <input type="text" class="form-control" id="area" placeholder="Description" name="area">
+				  <label for="area">Area</label>
+				</div>
+				<div class="form-floating mb-2">
+				  <input type="text" class="form-control" id="total" placeholder="Rate" name="total">
+				  <label for="total">Total</label>
+				</div>
+			</div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary">Save changes</button>
+		      </div>
+	      	</form>
+	    </div>
+	  </div>
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+	function lgout() {
+		window.location.href = "logout";
+	}
+
+	function del_order(id) {
+		if (confirm("do you really want to delete this order?")) {
+			window.location.href="/delete_order/" + id
+			alert("Service deleted")
+		}
+	}
+
+	function quot(id) {
+		window.location.href="quotation/" + id;
+	}
+</script>
+<script type="text/javascript">
+	async function edit_order(id) {
+		const response = await fetch('/edit_order/' + id);
+		const order = await response.json();
+		const modalTitle = editModal.querySelector('.modal-title')
+		const oid = editModal.querySelector('#oid')
+		const name = editModal.querySelector('#user')
+		const desc = editModal.querySelector('#service')
+		const area = editModal.querySelector('#area')
+		const rate = editModal.querySelector('#total')
+		// modalTitle.textContent = `Edit ${service.name}`;
+		oid.value = id;
+		name.value = order.user;
+		desc.value = order.service;
+		area.value = order.area;
+		rate.value = order.total;
+	}
+</script>
+<script type="text/javascript">
+	const editModal = document.getElementById('editOrder');
+	editModal.addEventListener('show.bs.modal', event => {
+		const button = event.relatedTarget;
+		const id = button.getAttribute('data-bs-id');
+		edit_order(id);
+	})
+</script>
+</html>

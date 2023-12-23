@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>About | unique fabrications</title>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+	<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg bg-success">
+	  <div class="container-fluid">
+	    <a class="navbar-brand" href="#">{{ request.user }}</a>
+	    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	      <span class="navbar-toggler-icon"></span>
+	    </button>
+	    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+	      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+	        <li class="nav-item">
+	          <a class="nav-link" href="/">Home</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link" href="#">About us</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link" href="services" aria-current="page">Services</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link" href="#">Contact Us</a>
+	        </li>
+	      </ul>
+	      <!-- <form class="d-flex" role="search">
+	        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+	        <button class="btn btn-outline-success" type="submit">Search</button>
+	      </form> -->
+	      <div class="d-flex">
+	      	<button class="btn btn-outline-danger" type="submit" onclick="lgout();">Log out</button>
+	      </div>
+	    </div>
+	  </div>
+	</nav>
+	<div class="container-fluid mt-5">
+		<div class="row justify-content-evenly">
+			{% for service in services %}			
+				<div class="col-lg-3 my-3">
+					<div class="card">
+						<img src="{% static 'img/service.jpeg' %}" class="card-img">
+						<div class="card-body">
+							<p class="card-text mb-4">{{ service.description }}</p>
+							<div class="row justify-content-center">
+								<div class="col-lg-auto col-auto">
+									<button class="btn btn-outline-success" type="button" onclick="service({{ service.id }})" data-bs-toggle="modal" data-bs-target="serviceModal">{{ service.name }}</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+	<div class="modal modal-sm fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h1 class="modal-title fs-5" id="serviceModalLabel">Apply for service</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	      	<form>
+			  <div class="mb-3">
+			    <label for="height" class="form-label">Height</label>
+			    <input type="number" class="form-control">
+			  </div>
+			  <div class="mb-3">
+			    <label for="width" class="form-label">Width</label>
+			    <input type="number" class="form-control">
+			  </div>
+			  <!-- <button type="submit" class="btn btn-primary">Calculate</button> -->
+			</form>
+	      </div>
+	      <div class="modal-footer d-flex justify-content-center">
+	        <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+	        <button type="button" class="btn btn-success">Calculate</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</body>
+<script type="text/javascript">
+	function lgout() {
+		window.location.href = "logout";
+	}
+
+	function service(id) {
+		window.location.href = "service/" + id;
+	}
+</script>
+<script type="text/javascript"></script>
+</html>

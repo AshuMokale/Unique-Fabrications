@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Feedback | unique fabrications</title>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container-fluid">
+	      <!-- Navbar brand/logo (you can replace it with your logo) -->
+	      <a class="navbar-brand" href="#">Unique Fabrications</a>
+
+	      <!-- Navbar items aligned to the left -->
+      <div class="collapse navbar-collapse mx-auto" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="services">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="orders">Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="feedback">Feedback</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Logout button at the right corner -->
+      <div class="d-flex">
+        <button class="btn btn-outline-light" type="button" onclick="lgout()"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </div>
+  </nav>
+
+	<div class="container-fluid mt-5">
+		<div class="card">
+			<div class="card-body">
+				<table class="table table-bordered text-center">
+					<thead>
+						<th>Sr no</th>
+						<th>Name</th>
+						<th>Email</th>
+						<th>Feedback</th>
+					</thead>
+					<tbody>
+						{% for fb in feedback %}
+							<tr>
+								<td>{{forloop.counter}}</td>
+								<td>{{fb.name}}</td>
+								<td>{{fb.email}}</td>
+								<td>{{fb.feedback}}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h1 class="modal-title fs-5" id="serviceModalLabel">Apply for service</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	        ...
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-primary" type="submit">Save changes</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Service</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	      	<form method="post" action="add_service">
+	      		{% csrf_token %}
+	      		<div class="form-floating mb-3">
+				  <input type="text" class="form-control" placeholder="name" name="name">
+				  <label for="floatingInput">name</label>
+				</div>
+				<div class="form-floating mb-3">
+				  <input type="text" class="form-control" id="floatingPassword" placeholder="name@example.com" name="email">
+				  <label for="floatingPassword">email</label>
+				</div>
+				<div class="form-floating mb-2">
+				  <input type="text" class="form-control" id="floatingPassword" placeholder="feedback" name="feedback">
+				  <label for="floatingPassword">feedback</label>
+				</div>
+			</div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		      </div>
+	      	</form>
+	    </div>
+	  </div>
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+	function lgout() {
+		window.location.href = "{% url 'logout' %}";
+	}
+</script>
+</html>

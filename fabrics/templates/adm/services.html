@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Services | unique fabrications</title>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+	<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container-fluid">
+		<!-- Navbar brand/logo (you can replace it with your logo) -->
+			<a class="navbar-brand" href="#">Unique Fabrications</a>
+
+	      <!-- Navbar items aligned to the left -->
+	      <div class="collapse navbar-collapse mx-auto" id="navbarNav">
+	        <ul class="navbar-nav">
+	          <li class="nav-item">
+	            <a class="nav-link" href="/">Home</a>
+	          </li>
+	          <li class="nav-item">
+	            <a class="nav-link" href="services">Services</a>
+	          </li>
+	          <li class="nav-item">
+	            <a class="nav-link" href="orders">Orders</a>
+	          </li>
+	          <li class="nav-item">
+	            <a class="nav-link" href="feedback">Feedback</a>
+	          </li>
+	        </ul>
+	      </div>
+
+      <!-- Logout button at the right corner -->
+      <div class="d-flex">
+        <button class="btn btn-outline-light" type="button" onclick="lgout()"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </div>
+  </nav>
+
+	<div class="container-fluid mt-5">
+		<div class="row justify-content-end">
+			<div class="col-auto">
+				<button class="btn btn-outline-primary mx-5 mb-3" data-bs-toggle="modal" data-bs-target="#addModal">Add Service</button>
+			</div>
+		</div>
+		<div class="row justify-content-evenly">
+			{% for service in services %}			
+				<div class="col-lg-3 my-3">
+					<div class="card">
+						<!-- <img src="{% static 'img/service.jpeg' %}" class="card-img"> -->
+						<img src="media/{{ service.image }}" class="card-img">
+						<div class="card-body">
+							<p class="card-text mb-4">{{ service.description }}</p>
+							<div class="row justify-content-center">
+								<div class="col-lg-auto col-auto">
+									<span class="fs-5">{{ service.name }} ₹{{ service.rate }}/sqft</span>&nbsp;
+									<button class="btn btn-outline-warning" type="button" data-bs-toggle="modal" data-bs-id="{{ service.id }}" data-bs-target="#editModal"><i class="bx bx-edit"></i></button>
+									<button class="btn btn-outline-danger" onclick="del_service({{ service.id }})"><i class="bx bx-trash"></i></button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+	<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h1 class="modal-title fs-5" id="editModalLabel">Edit service</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	      	<form method="post" action="{% url 'update_service' %}" enctype="multipart/form-data">
+	      		{% csrf_token %}
+	      		<input type="hidden" name="id" id="sid">
+	      		<div class="form-floating mb-3">
+				  <input type="text" class="form-control" id="service" placeholder="name@example.com" name="serviceName">
+				  <label for="service">Service</label>
+				</div>
+				<div class="mb-3">
+				  <label for="image" class="form-label">Image</label>
+				  <input class="form-control" type="file" name="image" id="image" accept="image/*">
+				</div>
+				<div class="form-floating mb-3">
+				  <input type="text" class="form-control" id="desc" placeholder="Description" name="serviceDescription">
+				  <label for="desc">Description</label>
+				</div>
+				<div class="form-floating mb-2">
+				  <input type="text" class="form-control" id="rate" placeholder="Rate" name="serviceRate">
+				  <label for="rate">Rate</label>
+				</div>
+			</div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary">Save changes</button>
+		      </div>
+	      	</form>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h1 class="modal-title fs-5" id="addModalLabel">Add Service</h1>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	      	<form method="post" action="{% url 'add_service' %}" enctype="multipart/form-data">
+	      		{% csrf_token %}
+	      		<div class="form-floating mb-3">
+				  <input type="text" class="form-control" name="name" id="name" placeholder="name@example.com">
+				  <label for="name">Service</label>
+				</div>
+				<div class="mb-3">
+				  <label for="image" class="form-label">Image</label>
+				  <input class="form-control" type="file" name="image" id="image" accept="image/*">
+				</div>
+				<div class="form-floating mb-3">
+				  <input type="text" class="form-control" id="description" placeholder="Description" name="description">
+				  <label for="description">Description</label>
+				</div>
+				<div class="form-floating mb-2">
+				  <input type="text" class="form-control" id="rate" placeholder="Rate" name="rate">
+				  <label for="rate">Rate</label>
+				</div>
+			</div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary">Save changes</button>
+		      </div>
+	      	</form>
+	    </div>
+	  </div>
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+	function lgout() {
+		window.location.href = "logout";
+	}
+</script>
+<script type="text/javascript">
+	function del_service(id) {
+		if (confirm("do you really want to delete this service?")) {
+			window.location.href="/delete_service/" + id
+			alert("Service deleted")
+		}
+	}
+</script>
+<script type="text/javascript">
+	async function getServiceDetails(id) {
+		const response = await fetch('/edit_service/' + id);
+		const service = await response.json();
+		const modalTitle = editModal.querySelector('.modal-title')
+		// const uid = editModal.querySelector('#uid')
+		const name = editModal.querySelector('#service')
+		const desc = editModal.querySelector('#desc')
+		const rate = editModal.querySelector('#rate')
+		const image = editModal.querySelector('#image')
+		modalTitle.textContent = `Edit ${service.name}`;
+		sid.value = service.id;
+		name.value = service.name;
+		desc.value = service.description;
+		rate.value = service.rate;
+		// image.value = service.image;
+	}
+</script>
+<script type="text/javascript">
+	const editModal = document.getElementById('editModal');
+	editModal.addEventListener('show.bs.modal', event => {
+		const button = event.relatedTarget;
+		const id = button.getAttribute('data-bs-id');
+		getServiceDetails(id);
+	})
+</script>
+</html>

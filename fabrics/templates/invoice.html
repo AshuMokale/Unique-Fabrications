@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <style type="text/css">
+        @page {
+            size: letter landscape;
+            margin: 2cm;
+        }
+    </style>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</head>
+<body>
+    <h1 class="text-center display-1 mb-3">Uniq Fabrications</h1>
+    <h4 class="mb-5 text-center mb-5">Invoice</h4>
+    <div class="row mb-3 justify-content-evenly">
+        <div class="col-5">
+            <p><b>Bill To</b><br>
+            <!-- Username <br> -->
+            {{ user.name }} <br>
+            {{ user.phone }} <br>
+            {{ user.address }} <br>
+            </p>
+        </div>
+        <div class="col-5">
+            <p class="float-end px-5">Date: </p>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <table class="table mt-3 align-center">
+                <thead>
+                    <tr>
+                        <th>Sr no</th>
+                        <th>Service</th>
+                        <th>Sqft</th>
+                        <th>Rate</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody class="float-end">
+                    <tr>
+                        <td>1</td>
+                        <td>{{service.name}}</td>
+                        <td>{{ area }}</td>
+                        <td>{{ service.rate }}</td>
+                        <td>{{ total }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- <div class="row justify-content-center">
+        <div class="col-2"><b>Sr no</b></div>
+        <div class="col-2"><b>Service</b></div>
+        <div class="col-2"><b>Area</b></div>
+        <div class="col-2"><b>Rate</b></div>
+        <div class="col-2"><b>Total</b></div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-2">Sr no</div>
+        <div class="col-2">{{service.name}}</div>
+        <div class="col-2">Area</div>
+        <div class="col-2">Rate</div>
+        <div class="col-2">Total</div>
+    </div> -->
+    <div class="row">
+        <h3 class="fs-2 float-end mt-5 mx-5">Thank You</h3>
+    </div>
+    <div class="row justify-content-start">
+        <div class="col mx-5">
+            <p>Uniue Fabrications <br>
+                Pune <br>
+                7057270440 <br>
+                UniqueFabrication@gmail.com <br>
+            </p>
+        </div>    
+    </div>
+</body>
+</html>
