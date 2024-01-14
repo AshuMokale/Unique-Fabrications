@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'uniq_fabrications.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'uniq',
+        'NAME': 'unique',
         'HOST': 'localhost',
         'USER': 'root',
         'PASSWORD': '',
