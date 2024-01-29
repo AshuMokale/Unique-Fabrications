@@ -1,3 +1,4 @@
 media/
-__pycache__/
-migrations/
+fabrics/__pycache__/*.pyc
+fabrics/migrations/
+unique_fabrications/__pycache__/*.pyc
