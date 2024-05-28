@@ -45,7 +45,7 @@ def login_user(request):
             messages.error(request, "Incorrect username or password!")
             # return render(request, 'login.html')
 
-    return render(request,'login.html')
+    return render(request,'login1.html')
 
 
 def logout_user(request):
@@ -321,7 +321,7 @@ def delete_order(request,id):
 
 def payment(request,id):
     order = get_object_or_404(Orders,id=id)
-    client = razorpay.Client(auth=("rzp_test_jVJhjYB6fVmmy7", "7xQlwvndREshe5dPNrOaKTNa"))
+    client = razorpay.Client(auth=("rzp_test_BNuKWkXYHC8QRe", "rscykgaSn7GobAZmdZAaRgSS"))
     client.set_app_details({"title" : "Unique Farbrications", "version" : "4.2.5"})
     amount = int(order.total) * 100
     order.payment_status = True

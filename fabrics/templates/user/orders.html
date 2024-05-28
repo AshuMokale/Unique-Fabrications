@@ -182,7 +182,7 @@
 		const response = await fetch('/payment/' + id);
 		const payment = await response.json();
 		var options = {
-		    "key": "rzp_test_jVJhjYB6fVmmy7", // Enter the Key ID generated from the Dashboard
+		    "key": "rzp_test_BNuKWkXYHC8QRe", // Enter the Key ID generated from the Dashboard
 		    "amount": payment.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
 		    "currency": "INR",
 		    "name": "Unique Fabrications",
