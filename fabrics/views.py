@@ -1,7 +1,6 @@
 from django.http import HttpResponse, JsonResponse, FileResponse
 from django.contrib.auth import authenticate, login, logout
 from django.core.serializers import serialize
-# from django.contrib.auth.decorators import login_required
 from django.template.loader import get_template
 from django.contrib.auth.models import User
 from fabrics.models import CustomUser, Services, Orders, Feedback
@@ -10,7 +9,6 @@ from django.views import View
 from fabrics.forms import InvoiceForm
 from django.contrib import messages
 import io
-# from reportlab.lib.pagesizes import letter, A4
 from reportlab.pdfgen import canvas
 from datetime import date
 import razorpay
